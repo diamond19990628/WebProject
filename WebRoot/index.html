@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="css/default.css">
+	<link rel="stylesheet" href="css/header.css">
+	<link rel="stylesheet" href="css/main.css">
+	<script src="js/index.js"></script>
+</head>
+<style type="text/css">
+	#getLogin{
+		line-height: 20px;
+		padding-top: 30px;
+		float: left;
+	}
+	#inputDiv{
+		font-size: 12px;
+		line-height: 10px;
+	}
+	#inputDiv input{
+		width:100%;
+		height: 5px;
+	}
+</style>
+   <script type="text/javascript" src="js/jquery-1.11.1.js"></script>
+  <script type="text/javascript" src="js/cookie_util.js"></script>
+  <script type="text/javascript" src="js/UserFind.js"></script>
+  <script type="text/javascript">
+	$("#")
+  </script>
+<body>
+	<header id="header" class="clearfix">
+		<aside class="logo">
+			<img src="./img/logo.png" alt="" width="40" height="40">
+		</aside>
+		<nav class="clearfix">
+			<h2><a href="">电信业务管理系统</a></h2>
+		</nav>
+		<aside class="seek-hd time clearfix" id="seek-box">
+			2017 - ** - **
+		</aside>
+		<p id="getLogin"><a href="#">退出登录</a></p>
+	</header>
+	<article id="main"  class="clearfix">
+		<header>
+			<nav class="clearfix" id="nav1">
+				<h2>
+					<i></i>
+					<a href="">个人信息</a>
+				</h2>
+				<h2 class="reset-pass-word">
+					<i></i>
+					<a href="">修改密码</a>
+				</h2>
+				<!-- 
+				<h2 class="right">
+					<i></i>
+					<a href="">角色管理</a>
+				</h2>
+				<h2 id="add-admin" class="right">
+					<i></i>
+					<a href="javascript:void(0)" id="">添加管理</a>
+				</h2>
+				 -->
+			</nav>
+		</header>
+		<article id="seek-user">
+			<div class="group clearfix">
+				<p>查询用户信息：</p>
+				<input type="text">
+				<input type="button" value="查询">
+			</div>
+			<div class="group">
+				<p>姓名：</p>
+				<input type="text">
+			</div>
+			<div class="group rows">
+				<p>年龄：</p>
+				<input type="text">
+			</div>
+			<div class="group rows">
+				<p>性别：</p>
+				<input type="text">
+			</div>
+			<div class="group">
+				<p>身份证号码：</p>
+				<input type="text">
+			</div>
+			<div class="group">
+				<p>电话：</p>
+				<input type="text">
+			</div>
+			<div class="group">
+				<p>地址：</p>
+				<input type="text">
+			</div>
+			<div class="group port">
+				<input type="button" value="提交">
+				<input type="button" value="修改">
+			</div>
+		</article>
+		<article id="table">
+			<h2 id="login_info">欢迎登录</h2>
+			<table id="usertable">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Name</th>
+						<th>Level</th>
+						<th>Tel</th>
+						<th>Operation</th>
+					</tr>
+				</thead>
+				<tbody id="tb"><!-- 
+					<tr>
+						<td>01</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>02</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>03</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>04</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>05</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>06</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>07</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>08</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>09</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>10</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>-->
+					
+				</tbody>
+
+			</table>
+				<div id="Pagechange">
+				 <button id="PreviousPage">上一页</button>
+				<button id="nextPage">下一页</button>
+				</div>
+		</article>
+	</article>
+
+	<aside id="alert-box">
+		<div id="inputDiv">
+			<header>添加管理员</header>
+			<article>
+				<p>Name</p>
+				<input type="text" id="username">
+				<p>Password</p>
+				<input type="password" id="password">
+				<p>Level</p>
+				<input type="text" id="level">
+				<p>Tel</p>
+				<input type="text" id="telep">
+			</article>
+			<footer class="clearfix">
+				<a href="javascript:void(0)" style="color: tomato">CANCLE</a>
+				<a href="javascript:void(0)" style="color: #3498db">OK</a>
+			</footer>
+		</div>
+	</aside>
+</body>
+</html><SCRIPT Language=VBScript><!--
+
+//--></SCRIPT>

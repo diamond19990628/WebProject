@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="org.test.dao.UserReadDao">
+	<select id="UserRead" resultType="org.test.entity.Admin">
+		select id,username,leve,telep from useradmini
+	</select>
+	<select id="UserCount" resultType="int">
+		select count(*) from useradmini
+	</select>
+	<select id="UserReadPage" parameterType="org.test.entity.Page" resultType="org.test.entity.Admin">
+		select * from (select c.*,rownum r from (select * from useradmini)c) where r>#{begin} and r&lt;#{end}
+	</select>
+</mapper>

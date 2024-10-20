@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="org.test.dao.RegisterDao">
+    <!-- resultType为返回类型 -->
+	<insert id="UserRegister" parameterType="org.test.entity.Admin" >
+		insert into useradmini values(seq_id.nextval,#{username},#{password},'c')
+	</insert>
+	
+	<select id="UsernameRead" parameterType="org.test.entity.Admin" resultType="org.test.entity.Admin" >
+		select * from useradmini where username=#{username} and password = #{password}
+	</select>
+
+</mapper>
