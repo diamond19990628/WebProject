@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Register.html</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+        <link type="text/css" rel="stylesheet" media="all" href="style/global.css" />
+        <link type="text/css" rel="stylesheet" media="all" href="style/global_color.css" />
+  </head>
+  <script type="text/javascript" src="js/jquery-1.11.1.js"></script>
+  <script type="text/javascript">
+  	$(function(){
+		  	$("#login").click(function(){
+  			var username = $("#uname").val().trim();
+  			var password = $("#pwd").val().trim();
+  			var password2 = $("#pwd2").val().trim();
+  			$("#sp1").text("");
+  			$("#sp2").text("");
+  			$("#sp3").text("");
+  			var updown = true;
+  			if(username==""){
+  				$("#sp1").text("用户名不能为空");
+  				updown=false;
+  			}
+  			if(password==""){
+  				$("#sp2").text("密码不能为空");
+  				updown=false;
+  			}
+  			if(password!=password2){
+  				$("#sp3").text("两次密码不一致");
+  				updown=false;
+  			}
+			if(updown){
+				$.ajax({
+					url:"http://localhost:8088/WebProject/Register.do",
+					type:"post",
+					data:{"username":username,"password":password},
+					dataType:"json",
+					success:function(result){
+						//result是服务器返回的json结果
+						if(result.status==1){//错误，用户名重复
+							$("#sp1").html(result.msg);
+						  	//跳转到index.html
+						}else if(result.status==0){//用户名可以使用
+						  	 $("#sp1").html(result.msg);
+						  	 alert("注册成功");
+						  	 window.location.href="login.html";
+						}
+					},
+					error:function(){
+						alert("系统错误");
+					}
+				});
+			}
+  		});
+  	});
+  </script>
+  <body class="index">
+    <div class="login_box">
+            <table>
+                <tr>
+                    <td class="login_info">账号：</td>
+                    <td colspan="2"><input id="uname" name="" type="text" class="width150" /></td>
+                    <td class="login_error_info"><span class="required" id="sp1"></span></td>
+                </tr>
+                <tr>
+                    <td class="login_info">密码：</td>
+                    <td colspan="2"><input id="pwd" name="" type="password" class="width150" /></td>
+                    <td><span class="required" id="sp2" ></span></td>
+                </tr>
+                <tr>
+                    <td class="login_info">确认密码：</td>
+                    <td colspan="2"><input id="pwd2" name="" type="text" class="width150" /></td>
+                    <td class="login_error_info"><span class="required" id="sp3"></span></td>
+                </tr>     
+                <tr>
+                    <td></td>
+                    <td class="login_button" colspan="2">
+                        <a href="javascript:void(0)"><img src="images/register_png.png" id="login"/></a>
+                    </td>    
+                    <td><span class="required"></span></td>                
+                </tr>
+            </table>
+    </div>
+  </body>
+</html>

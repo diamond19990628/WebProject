@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>系统登录</title>
+        <link type="text/css" rel="stylesheet" media="all" href="style/global.css" />
+        <link type="text/css" rel="stylesheet" media="all" href="style/global_color.css" />
+        
+        <script type="text/javascript" src="js/jquery-1.11.1.js"></script>
+        <script type="text/javascript" src="js/cookie_util.js"></script>
+        <script type="text/javascript">
+        (function() {
+        	function k(a, b, c) {
+        		if (a.addEventListener) a.addEventListener(b, c, false);
+        		else a.attachEvent && a.attachEvent("on" + b, c)
+        	}
+        	function g(a) {
+        		if (typeof window.onload != "function") window.onload = a;
+        		else {
+        			var b = window.onload;
+        			window.onload = function() {
+        				b();
+        				a()
+        			}
+        		}
+        	}
+        	function h() {
+        		var a = {};
+        		for (type in {
+        			Top: "",
+        			Left: ""
+        		}) {
+        			var b = type == "Top" ? "Y": "X";
+        			if (typeof window["page" + b + "Offset"] != "undefined") a[type.toLowerCase()] = window["page" + b + "Offset"];
+        			else {
+        				b = document.documentElement.clientHeight ? document.documentElement: document.body;
+        				a[type.toLowerCase()] = b["scroll" + type]
+        			}
+        		}
+        		return a
+        	}
+        	function l() {
+        		var a = document.body,
+        		b;
+        		if (window.innerHeight) b = window.innerHeight;
+        		else if (a.parentElement.clientHeight) b = a.parentElement.clientHeight;
+        		else if (a && a.clientHeight) b = a.clientHeight;
+        		return b
+        	}
+        	function i(a) {
+        		this.parent = document.body;
+        		this.createEl(this.parent, a);
+        		this.size = Math.random() * 5 + 5;
+        		this.el.style.width = Math.round(this.size) + "px";
+        		this.el.style.height = Math.round(this.size) + "px";
+        		this.maxLeft = document.body.offsetWidth - this.size;
+        		this.maxTop = document.body.offsetHeight - this.size;
+        		this.left = Math.random() * this.maxLeft;
+        		this.top = h().top + 1;
+        		this.angle = 1.4 + 0.2 * Math.random();
+        		this.minAngle = 1.4;
+        		this.maxAngle = 1.6;
+        		this.angleDelta = 0.01 * Math.random();
+        		this.speed = 2 + Math.random()
+        	}
+        	var j = false;
+        	g(function() {
+        		j = true
+        	});
+        	var f = true;
+        	
+        	window.createSnow = function(a, b) {
+        		if (j) {
+        			var c = [],
+        			m = setInterval(function() {
+        				f && b > c.length && Math.random() < b * 0.0025 && c.push(new i(a)); ! f && !c.length && clearInterval(m);
+        				for (var e = h().top, n = l(), d = c.length - 1; d >= 0; d--) if (c[d]) if (c[d].top > 1500 || c[d].top + c[d].size + 1 > e + n) {
+        					c[d].remove();
+        					c[d] = null;
+        					c.splice(d, 1)
+        					//alert(c[d].top)
+        				} else {
+        					c[d].move();
+        					c[d].draw()
+        				}
+        			},
+        			40);
+        			k(window, "scroll",
+        			function() {
+        				for (var e = c.length - 1; e >= 0; e--) c[e].draw()
+        			})
+        		} else g(function() {
+        			createSnow(a, b)
+        		})
+        	};
+        	window.removeSnow = function() {
+        		f = false
+        	};
+        	i.prototype = {
+        		createEl: function(a, b) {
+        			this.el = document.createElement("img");
+        			this.el.setAttribute("src", b + "img\\snow" + Math.floor(Math.random() * 4) + ".gif");
+        			this.el.style.position = "absolute";
+        			this.el.style.display = "block";
+        			this.el.style.zIndex = "99999";
+        			this.parent.appendChild(this.el)
+        		},
+        		move: function() {
+        			if (this.angle < this.minAngle || this.angle > this.maxAngle) this.angleDelta = -this.angleDelta;
+        			this.angle += this.angleDelta;
+        			this.left += this.speed * Math.cos(this.angle * Math.PI);
+        			this.top -= this.speed * Math.sin(this.angle * Math.PI);
+        			if (this.left < 0) this.left = this.maxLeft;
+        			else if (this.left > this.maxLeft) this.left = 0
+        		},
+        		draw: function() {
+        			this.el.style.top = Math.round(this.top) + "px";
+        			this.el.style.left = Math.round(this.left) + "px"
+        		},
+        		remove: function() {
+        			this.parent.removeChild(this.el);
+        			this.parent = this.el = null
+        		}
+        	}
+        })();
+        </script>
+         <script type="text/javascript">
+         	$(function(){//页面载入后执行,
+         		var cookies= getCookie("cookies");
+  				if(cookies!=null){ 
+  					 window.location.href="index.html";
+  				}
+				$("#login").click(function(){
+					var i = 0;
+					//清空消息
+					$("#count_msg").html("");
+					$("#password_msg").html("");
+					//获取请求参数
+					var username = $("#username").val().trim();
+					var password = $("#password").val().trim();
+					//检查参数
+					var ok = true;//表示表单是否通过检测
+					if(username==""){
+					  $("#count_msg").html("用户名不能为空");
+					  ok = false;
+					}
+					if(password==""){
+					  $("#password_msg").html("密码不能为空");
+					  ok = false;
+					}
+					
+					//发送ajax请求
+					if(ok){
+						$.ajax({
+						  url:"http://localhost:8088/WebProject/login.do",
+						  type:"post",
+						  data:{"username":username,"password":password},
+						  dataType:"json",
+						  success:function(result){
+						  	//result是服务器返回的json结果
+						  	if(result.status==0){//成功
+						  	     $("#count_msg").html(result.msg);
+						  	   //跳转到index.html
+						  	   addCookie("cookies","yes",0);
+						  	   var admin = result.data;
+						  	   addCookie("level",admin.leve,0);
+						  	   addCookie("Username",admin.username,0);
+						  	   window.location.href="index.html";
+						  	}else if(result.status==1){//用户名错
+						  	   $("#count_msg").html(result.msg);
+						  	}else if(result.status==2){
+						  		delCookie("Username");
+						  	}
+						  },
+						  error:function(){
+						  	alert("系统错误");
+						  }
+						});
+					}
+				});
+			});
+         		
+         </script>
+         
+         
+         
+    </head>
+    <body class="index">
+        <div class="login_box">
+            <table>
+                <tr>
+                    <td class="login_info">账号：</td>
+                    <td colspan="2"><input id="username" name="" type="text" class="width150" /></td>
+                    <td class="login_error_info"><span class="required" id="count_msg"></span></td>
+                </tr>
+                <tr>
+                    <td class="login_info">密码：</td>
+                    <td colspan="2"><input id="password" name="" type="password" class="width150" /></td>
+                    <td><span class="required" id="password_msg" ></span></td>
+                </tr>
+                       
+                <tr>
+                    <td></td>
+                    <td class="login_button" colspan="2">
+                        <a href="javascript:void(0)"><img id="login" src="images/login_btn.png" /></a>
+                   
+                    </td>    
+                    <td><span class="required"></span></td>                
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>
