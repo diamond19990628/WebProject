@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="org.test.dao.AdminDao">
+	<select id="UserRead" resultType="org.test.entity.Admin">
+		select id,username,leve,telep from useradmini
+	</select>
+	<select id="UserCount" resultType="int">
+		select count(*) from useradmini
+	</select>
+	<select id="UserReadPage" parameterType="org.test.entity.Page" resultType="org.test.entity.Admin">
+		select * from (select c.*,rownum r from (select * from useradmini)c) where r>#{begin} and r&lt;#{end}
+	</select>
+	
+	<select id="UserInfoFind" parameterType="java.lang.String" resultType="org.test.entity.UserInfo">
+		select Userinfo.* from Userinfo,useradmini where account = useradmini.username and useradmini.username = #{username}
+	</select>
+	
+	<update id="UserInfoUpdate" parameterType="org.test.entity.UserInfo">
+		update Userinfo set age = #{age},sex = #{sex},telep = #{telep},address = #{address} where account = #{account}
+	</update>
+	
+	<update id="UserAdminiUpdate" parameterType="java.lang.String">
+		update useradmini set telep = #{0} where username = #{1}
+	</update>
+	
+	    <!-- resultType为返回类型 -->
+    <select id="UserNameRead" parameterType="java.lang.Integer" resultType="java.lang.String">
+    	select username from useradmini where id=#{id}
+    </select>
+    <delete id="DeleteUser" parameterType="org.test.entity.Admin">
+    	delete from useradmini where id = #{id}
+    </delete>
+    <update id="UpdateUserInfo" parameterType="java.lang.String">
+    	update userinfo set account ='' where account = #{0}
+    </update>
+    
+    <select id="PasswordRead" parameterType="java.lang.String" resultType="java.lang.String">
+		select password from useradmini where username = #{username}
+	</select>
+	
+	<update id="UpdatePass" parameterType="org.test.entity.Admin">
+		update useradmini set password = #{password} where username = #{username}
+	</update>
+	    <!-- resultType为返回类型 -->
+	<insert id="UserRegister" parameterType="org.test.entity.Admin" >
+		insert into useradmini values(seq_id.nextval,#{username},#{password},#{leve},#{telep},'0')
+	</insert>
+	<!-- 查看用户名是否存在 -->
+	<select id="UsernameRead" parameterType="org.test.entity.Admin" resultType="org.test.entity.Admin" >
+		select * from useradmini where username=#{username}
+	</select>
+	<!-- 查询是否有该用户 -->
+	<select id="UserinfoRead1" parameterType="java.lang.String" resultType="org.test.entity.UserInfo">
+		select * from Userinfo where id = #{0}
+	</select>
+	<!-- 查询该用户名是否已被绑定过 -->
+	<select id="AccountRead" parameterType="java.lang.String" resultType="org.test.entity.UserInfo">
+		select * from Userinfo where account = #{0}
+	</select>
+	<!-- 修改UserInfo表 -->
+	<update id="UserinfoAdd" parameterType="org.test.entity.UserInfo">
+		update Userinfo set account = #{account} where id = #{id}
+	</update>
+	
+	<select id="UpdateUser" parameterType="org.test.entity.Admin">
+		update useradmini set username = #{username},leve = #{leve},telep = #{telep} where id = #{id}
+	</select>
+	
+	<select id="UserinfoRead2" parameterType="java.lang.String" resultType="org.test.entity.UserInfo">
+		select * from Userinfo where account = #{0}
+	</select>
+	
+	<update id="UserinfoUpdate" parameterType="java.lang.String">
+		update Userinfo set telep = #{0} where account = #{1}
+	</update>
+</mapper>

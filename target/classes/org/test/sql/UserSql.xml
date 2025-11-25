@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="org.test.dao.UserDao">
+	<insert id="UserAdd" parameterType="org.test.entity.User">
+		insert into Usertable values(seq_id.nextval,#{username},#{age},#{sex},#{idCard},#{telep},#{address})
+	</insert>
+	
+	<select id="UserFind" parameterType="java.lang.String" resultType="org.test.entity.User">
+		select * from Usertable where idCard = #{idCard}
+	</select>
+	
+	<select id="queryUserByIdCard" parameterType="java.lang.String" resultType="java.util.Map">
+		select Usertable.username,Usertable.age,Usertable.sex,Usertable.idcard,Usertable.telep,Usertable.address,phone,amount,basic,handletime  
+						from Usertable,PreductInfo 
+								where Usertable.idcard = PreductInfo.idcard and PreductInfo.idcard = #{idcard}
+	</select>
+	
+	<select id="UserInfoFindById" parameterType="java.lang.String" resultType="org.test.entity.User">
+		select * from Usertable where idcard = #{idcard}
+	</select>
+	
+	<select id="queryUserByPhone" parameterType="java.lang.String" resultType="org.test.entity.UserPreductInfo">
+		select Usertable.username,Usertable.age,Usertable.sex,Usertable.idcard,Usertable.telep,Usertable.address,phone,amount,basic,handletime 
+          from PreductInfo,Usertable
+              where Usertable.idcard = (select idcard from PreductInfo where phone =#{phone}) and Usertable.idcard = PreductInfo.idcard
+	</select>
+	
+	<update id="UpdateUserInfo" parameterType="java.lang.String">
+		update Usertable set telep = #{0},address = #{1} where idCard = #{2}
+	</update>
+</mapper>

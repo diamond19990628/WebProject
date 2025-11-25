@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>业务办理</title>
+	<link rel="stylesheet" href="css/default.css">
+	<link rel="stylesheet" href="css/header.css">
+	<link rel="stylesheet" href="css/main.css">
+	<script src="js/index.js"></script>
+</head>
+<style type="text/css">
+	#getLogin{
+		line-height: 20px;
+		padding-top: 30px;
+		float: left;
+	}
+	#inputDiv{
+		font-size: 12px;
+		line-height: 3px;
+	}
+	#inputDiv input{
+		width:100%;
+		height: 5px;
+	}
+	#Pagechange li{
+		width: 30px;
+		height: 20px;
+		float: left;
+	}
+	#Pagechange button{
+		float: left;
+		width: 70px;
+	}
+</style>
+   <script type="text/javascript" src="js/jquery-1.11.1.js"></script>
+   <script src="js/snow.js"></script>
+<script>createSnow('', 60);</script>
+  <script type="text/javascript" src="js/cookie_util.js"></script>
+  <script type="text/javascript" src="js/Admin.js"></script>
+  <script type="text/javascript" src="js/UserFind.js"></script>
+  <script type="text/javascript" src="js/AddUser.js"></script>
+  <script type="text/javascript" src="js/UpdateUser.js"></script>
+  <script type="text/javascript" src="js/Delete.js"></script>
+  <script type="text/javascript">
+
+  	//个人信息查询
+  	function userInfoFind(){
+  		$("#usertable").html("");
+  		$("#queryErr").html("");
+  		$("#usertable").show();
+  		$("#Pagechange").hide();
+  		$("#login_info").text("个人信息");
+  		$("#updatePasstable").hide();
+  		$.ajax({
+			url:"http://localhost:8088/WebProject/UserInfoFind.do",
+			type:"post",
+			data:{"username":admin.username},
+			dataType:"json",
+			success:function(result){
+				var status = result.status;
+				var userinfoObject = result.data;
+				if(status=="0"){
+					alert(result.msg);
+					var userinfo = '<p>编号:<input type="text" value='+userinfoObject.id+' readonly="readonly"></p><br>'+
+					'<p>姓名:<input type="text" value='+userinfoObject.username+' readonly="readonly"></p><br>'+
+					'<p>用户名:<input type="text" value='+userinfoObject.account+' readonly="readonly"></p><br>'+
+					'<p>身份证:<input type="text" value='+userinfoObject.idCard+' readonly="readonly" style="width:150px"></p><br>'+
+					'<p>年龄:<input type="text" id="age" value='+userinfoObject.age+' ></p><br>'+
+					'<p>性别:<input type="text" id="sex" value='+userinfoObject.sex+' ></p><br>'+
+					'<p>电话:<input type="text" id="telep" value='+userinfoObject.telep+' ></p><br>'+
+					'<p>住址:<input type="text" id="address" value='+userinfoObject.address+' ></p><br>'+
+					'<p><button onclick="InfoBc();">确认</button>&nbsp;&nbsp;&nbsp;<button>取消</button></p>';
+					$("#usertable").html(userinfo);
+				}
+			},
+			error:function(){
+				alert("系统错误");
+			}
+		});
+  	}
+  
+  	//修改个人信息
+  	function InfoBc(){
+  		$("#usernamecheck").html("");
+  		$("#agecheck").html("");
+  		$("#sexcheck").html("");
+  		$("#sfzcheck").html("");
+  		$("#telcheck").html("");
+  		$("#addresscheck").html("");
+  		var MathReg = /\d/;
+  		var telepReg = /(\d{3}-|\d{4}-)?(\d{8}|\d{7})/;
+  		var age = $("#age").val();
+  		var sex = $("#sex").val().trim();
+  		var telep = $("#telep").val();
+  		var address = $("#address").val();
+  		var boo = true;
+  		if(age==""){
+  			alert("年龄不能为空");
+  			boo = false;
+  			return;
+  		}if(sex==""){
+  			alert("性别不能为空");
+  			boo = false;
+  			return;
+  		}if(telep==""){
+  			alert("联系方式不能为空");
+  			boo = false;
+  			return;
+  		}if(address==""){
+  			alert("住址不能为空");
+  			boo = false;
+  			return;
+  		}if(MathReg.test(age)&&age>=18&&age<=65){
+  			boo=true;
+  		}else{
+  			alert("年龄输入不正确");
+  			boo = false;
+  			return;
+  		}
+  		if(sex=="M"||sex=="F"){
+  			boo = true;
+  		}else{
+  			alert("性别输入不正确");
+  			boo = false;
+  			return;
+  		}if(telepReg.test(telep)&&telep.length==11){
+  			boo = true;
+  		}else{
+  			alert("电话输入不正确");
+  			boo = false;
+  			return;
+  		}
+  		if(boo){
+  			$.ajax({
+			url:"http://localhost:8088/WebProject/UserInfoUpdate.do",
+			type:"post",
+			data:{"age":age,"sex":sex,"telep":telep,"address":address,"username":username},
+			dataType:"json",
+			success:function(result){
+				alert(result.msg);
+			},
+			error:function(){
+				alert("系统错误");
+			}
+		});
+  		}
+  	}
+  	//用户添加
+  	function userAdd(){
+  		var MathReg = /\d/;
+  		var idCardReg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+  		$("#usernamecheck").html("");
+  		$("#agecheck").html("");
+  		$("#sexcheck").html("");
+  		$("#sfzcheck").html("");
+  		$("#telcheck").html("");
+  		$("#addresscheck").html("");
+  		var username = $("#uname").val();
+  		var userage = $("#userage").val();
+  		var usersex = $("#usersex").val();
+  		var userIdcard = $("#userIdcard").val();
+  		var usertelep = $("#usertelep").val();
+  		var useraddress = $("#useraddress").val();
+  		
+  		if(username==""){
+  			$("#usernamecheck").html("姓名不能为空");
+  			return;
+  		}
+  		if(userage==""){
+  			$("#agecheck").html("年龄不能为空");
+  			return;
+  		}
+  		if(!MathReg.test(userage)){
+  			$("#agecheck").html("年龄输入有误");
+  			return;
+  		}
+  		if(usersex==""){
+  			$("#sexcheck").html("性别不能为空");
+  			return;
+  		}
+  		if(usersex!="男"&&usersex!="女"){
+  			$("#sexcheck").html("性别输入有误");
+  			return;
+  		}
+  		if(userIdcard==""){
+  			$("#sfzcheck").html("身份证不能为空");
+  			return;
+  		}
+  		if(!idCardReg.test(userIdcard)||userIdcard.length!=18){
+  			$("#sfzcheck").html("身份证输入有误");
+  			return;
+  		}
+  		if(usertelep==""){
+  			$("#telcheck").html("电话不能为空");
+  			return;
+  		}
+  		if(!MathReg.test(usertelep)||usertelep.length!=11){
+  			$("#telcheck").html("电话输入有误");
+  			return;
+  		}
+  		if(useraddress==""){
+  			$("#addresscheck").html("住址不能为空");
+  			return;
+  		}
+  		$.ajax({
+	  		url:"http://localhost:8088/WebProject/UserAdd.do",
+	  		type:"post",
+	  		data:{"username":username,"userage":userage,"usersex":usersex,"userIdcard":userIdcard,"usertelep":usertelep,"useraddress":useraddress},
+	  		dataType:"json",
+	  		success:function(result){
+	  			if(result.status==0){
+	  				alert(result.msg);
+	  				closeBox();
+	  			}else{
+	  				alert(result.msg);
+	  			}
+	  			
+	  		},
+	  		error:function(){
+	  			alert("系统错误，请联系管理员");
+	  		}
+	  	});
+  	}
+  	//关闭弹窗
+  	function closeBox(){
+			$("#alert-box2 div").attr("class");
+			$("#alert-box2 div").attr("class","closeAlertBox 0s");
+			$("#alert-box2").css("width","0px");
+			$("#alert-box2").css("height","0px");
+	}
+		
+	
+  </script>
+  <script type="text/javascript">
+  var Uinfo;
+  var idCardReg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+	var phoneReg = /^1[3|4|5|8][0-9]\d{4,8}$/;
+	var status;
+	var DXReg = /^(133|153|180|189|177)\d{8}$/;
+	//用户查询
+  function QueryUser(){
+  		$("#preservations").html("");
+  		$("#uName").val("");
+		$("#uAge").val("");
+		$("#uSex").val("");
+		$("#uIdCard").val("");
+		$("#uTelep").val("");
+		$("#uAddress").val("");
+		$("#queryErr").html("");
+		var userinfo = $("#queryUser").val().trim();
+		
+		var boo = true;
+		if(!idCardReg.test(userinfo)){
+			if(!DXReg.test(userinfo)){
+				$("#queryErr").html("必须输入电信手机号或正确的身份证");
+				$("#usertable").html("");
+				boo = false;
+			}else{
+				boo = true;
+			}
+		}
+		//通过身份证进行信息查询
+		if(boo){
+			if(userinfo.length==15||userinfo.length==18){
+				$.ajax({
+				url:"http://localhost:8088/WebProject/QueryUser.do",
+				type:"post",
+				data:{"queryinfo":userinfo},
+				dataType:"json",
+				success:function(result){
+					status = result.status;
+					if(result.status==0){
+						var userinfo = result.data;
+						Uinfo = userinfo;
+						$("#uName").val(userinfo[0].USERNAME);
+						$("#uAge").val(userinfo[0].AGE);
+						$("#uSex").val(userinfo[0].SEX);
+						$("#uIdCard").val(userinfo[0].IDCARD);
+						$("#uTelep").val(userinfo[0].TELEP);
+						$("#uAddress").val(userinfo[0].ADDRESS);
+						$("#uTelep").attr("readonly","readonly");
+						$("#uAddress").attr("readonly","readonly");
+						$("#update").val("修改");
+						$("#login_info").html("业务办理&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").append("<button id='Phoneshow' onclick='PhoneRead();'>手机号办理</button>&nbsp;&nbsp;&nbsp;<button id='KDshow' onclick='KDRead()'>宽带办理</button>");
+						$("#updatePasstable").hide();
+						$("#usertable").html("");
+						var thead = '<thead><tr><th>用户名</th><th>手机号</th><th>预存金额</th><th>最低消费</th><th>办理时间</th></tr></thead><tbody id="tb"></tbody>';
+						$("#usertable").html("");
+						$("#usertable").html(thead);
+						for(var i = 0;i<userinfo.length;i++){
+							var tbb = '<tr><td>'+userinfo[i].USERNAME+'</td><td>'+userinfo[i].PHONE+'</td><td class="edit-content">'+userinfo[i].AMOUNT+'</td>'+
+							'<td class="edit-content">'+userinfo[i].BASIC+'</td><td>'+userinfo[i].HANDLETIME+'</td></tr>';
+							$("#tb").append(tbb);
+						}
+					}
+					else if(result.status==2){
+						var userinfo = result.data;
+						Uinfo = userinfo;
+						$("#uName").val(userinfo.username);
+						$("#uAge").val(userinfo.age);
+						$("#uSex").val(userinfo.sex);
+						$("#uIdCard").val(userinfo.idCard);
+						$("#uTelep").val(userinfo.telep);
+						$("#uAddress").val(userinfo.address);
+						$("#uTelep").attr("readonly","readonly");
+						$("#uAddress").attr("readonly","readonly");
+						$("#update").val("修改");
+						$("#login_info").html("业务办理&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").append("<button id='Phoneshow' onclick='PhoneRead();'>手机号办理</button>&nbsp;&nbsp;&nbsp;<button id='KDshow'>宽带办理</button>");
+						$("#updatePasstable").hide();
+						$("#usertable").hide();
+					}
+					else{
+						alert("没有找到该用户信息");
+						$("#uName").val("");
+						$("#uAge").val("");
+						$("#uSex").val("");
+						$("#uIdCard").val("");
+						$("#uTelep").val("");
+						$("#uAddress").val("");
+						$("#uTelep").attr("readonly","readonly");
+						$("#uAddress").attr("readonly","readonly");
+					}
+					
+					
+			},
+				error:function(){
+					alert("系统错误");
+				}
+			});
+			}
+			//通过手机号进行业务查询
+			else if(userinfo.length==11){
+				$.ajax({
+					url:"http://localhost:8088/WebProject/QueryUser.do",
+					type:"post",
+					data:{"queryinfo":userinfo},
+					dataType:"json",
+					success:function(result){	
+						var UserPreductInfo = result.data;
+						if(UserPreductInfo==null){
+							alert("该手机号还未办理过任何电信业务");
+							return;
+						}
+						$("#uName").val(UserPreductInfo[0].username);
+						$("#uAge").val(UserPreductInfo[0].age);
+						$("#uSex").val(UserPreductInfo[0].sex);
+						$("#uIdCard").val(UserPreductInfo[0].idcard);
+						$("#uTelep").val(UserPreductInfo[0].telep);
+						$("#uAddress").val(UserPreductInfo[0].address);
+						$("#usertable").show();
+						$("#login_info").text("业务查询");
+						$("#Phoneshow").remove();
+						$("#KDshow").remove();
+						var thead = '<thead><tr><th>用户姓名</th><th>手机号</th><th>预存金额</th><th>最低消费</th><th>办理时间</th></tr></thead><tbody id="tb"></tbody>';
+						$("#usertable").html("");
+						$("#usertable").append(thead);
+						for(var i = 0;i<UserPreductInfo.length;i++){
+							var div = '<tr><td>'+UserPreductInfo[i].username+'</td><td class="edit-content">'+UserPreductInfo[i].phone+'</td>'+
+							'<td class="edit-content">'+UserPreductInfo[i].amount+'</td><td>'+UserPreductInfo[i].basic+'</td><td>'+UserPreductInfo[i].handletime+'</td></tr>';
+							$("#tb").append(div);
+						}
+					},
+					error:function(){
+						alert("系统错误");
+					}
+				});
+			
+			}
+			
+		}
+	}
+	
+	//启动 修改模式
+	function UserUpdate(){
+		$("#telepCheck").html("");
+		$("#addressCheck").html("");
+		var update = $("#update").val();
+		//如果为修改模式
+		if(update=="取消修改"){
+			window.setTimeout(function(){
+				$("#submit").removeAttr("onclick");
+				$("#uTelep").attr("readonly","readonly");
+				$("#uAddress").attr("readonly","readonly");
+				$("#update").val("修改");
+			},200);
+		}else{
+			window.setTimeout(function(){
+				var telep = $("#uTelep").val();
+				var address = $("#uAddress").val();
+				if(telep==""||address==""){
+					alert("由于电话或住址为空，无法进入修改模式");
+					return;
+				}
+				$("#submit").attr("onclick","UpdateUserOk()");
+				$("#uTelep").removeAttr("readonly");
+				$("#uAddress").removeAttr("readonly");
+				alert("已开启修改模式，您现在可对用户的预留电话和地址进行修改");
+				$("#update").val("取消修改");
+			},200);
+		}
+		
+	}
+	//提交修改
+	function UpdateUserOk(){
+	
+		var tel = $("#uTelep").val();
+		var address = $("#uAddress").val();
+		var boo = true;
+		var idcard = $("#uIdCard").val();
+		
+		if(tel==""&&address==""){
+			alert("请先电子查询，才可以进行修改提交");
+			return;
+		}
+		if(!phoneReg.test(tel)||tel.length!=11){
+			$("#telepCheck").html("电话输入有错误");
+			boo = false;
+		}
+		if(address==""){
+			$("#addressCheck").html("住址不能为空");
+			boo = false;
+		}
+		//如果什么都没改动
+		if(tel==Uinfo.telep&&address==Uinfo.address){
+			$("#uTelep").attr("readonly","readonly");
+			$("#uAddress").attr("readonly","readonly");
+			$("#update").val("修改");
+			return;
+		}
+		if(boo){
+			$.ajax({
+				url:"http://localhost:8088/WebProject/UpdateUserInfo.do",
+				type:"post",
+				data:{"idCard":idcard,"telep":tel,"address":address},
+				dataType:"json",
+				success:function(result){
+					alert(result.msg);
+					$("#telepCheck").html("");
+					$("#addressCheck").html("");
+					$("#uTelep").attr("readonly","readonly");
+					$("#uAddress").attr("readonly","readonly");
+					$("#submit").attr("onclick","#");
+					$("#update").val("修改");
+				},
+				error:function(){
+					alert("系统错误");
+				}
+			});
+		}
+	}
+	
+  </script>
+  <script type="text/javascript">
+  $(function(){
+  	$("#Pagechange").html("");
+  });
+  var Pre;
+  //手机号码查询
+  var currentPage = 1;
+  var pageSize = 10;
+  var totalPage;
+  $.ajax({
+		url:"http://localhost:8088/WebProject/PreductReadMath.do",
+		type:"post",
+		data:{"":""},
+		dataType:"json",
+		success:function(result){
+			var rows = result.data;//rows = 18
+			if(rows%pageSize==0){//pageSize = 10
+				totalPage = rows/pageSize; 
+			}else{
+				totalPage = parseInt(rows/pageSize+1);//
+			}
+		},
+		error:function(){
+			alert("系统错误");
+		}
+	});
+	//显示手机号分页查询
+  function PhoneRead(){
+  		$("#Pagechange").hide();
+  		 var begin=(currentPage-1)*pageSize;
+ 		 var end=currentPage*pageSize+1;
+  		$.ajax({
+			url:"http://localhost:8088/WebProject/PreductRead.do",
+			type:"post",
+			data:{"begin":begin,"end":end},
+			dataType:"json",
+			success:function(result){
+				if(result.status==0){
+					
+					var Preduct = result.data;
+					Pre = Preduct;
+					$("#usertable").show();
+					$("#usertable").html("");
+					var thead = '<thead><tr><th>编号</th><th>手机号</th><th>预存金额</th><th>保底消费</th><th>操作</th></tr></thead><tbody id="tb"><tbody>';
+					$("#usertable").html(thead);
+					for(var i = 0;i<Preduct.length;i++){
+						var tbb = "<tr><td>"+Preduct[i].id+"</td><td>"+Preduct[i].pnumber+"</td><td>"+Preduct[i].prestore+"</td>"+
+							"</td><td>"+Preduct[i].basic+"</td><td><button onclick='phoneshow(this)'>手机号办理</button></td>"+
+							"</tr>";
+						
+						$("#tb").append(tbb);
+					}
+					$("#preservations").html("");
+					var page = '<p><button onclick="pageChangeDown();">上一页</button><td><span id="pageMath"></span></td><button onclick="pageChangeup();">下一页</button></p>';
+					$("#preservations").append(page);
+				}
+			},
+			error:function(){
+				alert("系统错误");
+			}
+		});
+  }
+  //下一页
+  function pageChangeup(){
+  	currentPage++;
+  	if(currentPage>totalPage){
+  		currentPage = totalPage;
+  	}
+  	PhoneRead();
+  }
+  //上一页
+  function pageChangeDown(){
+  	
+  	currentPage = currentPage-1;
+  	if(currentPage<1){
+  		currentPage = 1;
+  		
+  	}
+  	PhoneRead();
+  }
+  
+  //点击手机号办理
+  	var mathReg = /\d/;
+  	var a;
+	function phoneshow(btn){
+		a = btn;
+		$("#precheck").html("");
+		$("#uname3").val("");
+		$("#userIdcard3").val("");
+		$("#userphone3").val("");
+		$("#ubasic3").val("");
+		$("#uprestore3").val("");
+		var username = $("#uName").val();
+		var idcard = $("#uIdCard").val();
+		$("#uname3").val(username);
+		$("#userIdcard3").val(idcard);
+		var parObj = $(btn).parent().prevAll();
+		var phone=parObj.eq(2).html();
+		var basic = parObj.eq(0).html();
+		var pre = parObj.eq(1).html();
+		//改变选择后的状态
+		PhonestatusUpdate1(phone);
+		$("#upre3").val(pre);
+		$("#userphone3").val(phone);
+		$("#ubasic3").val(basic);
+	}
+	//选择后改变状态
+	function PhonestatusUpdate1(phone){
+		$.ajax({
+			url:"http://localhost:8088/WebProject/phoneStatusUpdate1.do",
+			type:"post",
+			data:{"phone":phone},
+			dataType:"json",
+			success:function(result){
+				if(result.status==1){
+					alert(result.msg);
+				}else{
+					var oAlertBox3 = document.querySelector('#alert-box3');
+					oAlertBox3.style.width = '100%';
+					oAlertBox3.style.height = '100%';
+					oAlertBox3.querySelector('div').style.animation = 'alertBox 500s';
+				}
+			},
+			error:function(){
+				alert("系统错误");
+			}
+		});
+	}
+	//取消
+	function PhonestatusUpdate2(phone){
+		$.ajax({
+			url:"http://localhost:8088/WebProject/phoneStatusUpdate2.do",
+			type:"post",
+			data:{"phone":phone},
+			dataType:"json",
+			success:function(result){
+				
+			},
+			error:function(){
+				alert("系统错误");
+			}
+		});
+		
+	}
+	//确认选择
+	function PhoneOk(){
+		var uname = $("#uname3").val();
+		var uIdcard = $("#userIdcard3").val();
+		var userphone = $("#userphone3").val();
+		var ubasic = $("#ubasic3").val();
+		var amount = $("#uprestore3").val();
+		var pre = $("#upre3").val().trim();
+		var telep = $("#uTelep").val();
+		if(!mathReg.test(amount)){
+			$("#precheck").html("预存金额不匹配");
+			return;
+		}
+		if(amount<parseInt(pre)){
+			alert("无法执行");
+			$("#precheck").html("预存金额不能低于低于此卡的预存金额");
+			return;
+		}
+		$.ajax({
+			url:"http://localhost:8088/WebProject/PreductShow.do",
+			type:"post",
+			data:{"uname":uname,"uIdcard":uIdcard,"userphone":userphone,"ubasic":ubasic,"amount":amount,"pre":pre},
+			dataType:"json",
+			success:function(result){
+				alert(result.msg);
+				if(result.status==0){
+					if(!DXReg.test(telep)){
+						$.ajax({
+							url:"http://localhost:8088/WebProject/TelepUpdate.do",
+							type:"post",
+							data:{"Phone":userphone,"idcard":uIdcard},
+							dataType:"json",
+							success:function(result){
+								$("#uTelep").val(userphone);
+							},
+							error:function(){
+								alert("系统错误");
+							}
+						});
+					}
+				}
+				closeBox3(userphone);
+				$(a).parent().parent().children().remove();
+			},
+			error:function(){
+				alert("系统错误");
+			}
+		});
+	}
+	function closeBox3(phone){
+			$("#alert-box3 div").attr("class");
+			$("#alert-box3 div").attr("class","closeAlertBox 0s");
+			$("#alert-box3").css("width","0px");
+			$("#alert-box3").css("height","0px");
+	}
+	function changeClose(){
+		$("#alert-box3 div").attr("class");
+		$("#alert-box3 div").attr("class","closeAlertBox 0s");
+		$("#alert-box3").css("width","0px");
+		$("#alert-box3").css("height","0px");
+		var phone = $("#userphone3").val();
+		PhonestatusUpdate2(phone);
+	}
+	//宽带查询
+	function KDRead(){
+		$("#preservations").html("");
+		$.ajax({
+			url:"http://localhost:8088/WebProject/KDPreductRead.do",
+			type:"post",
+			data:{"":""},
+			dataType:"json",
+			success:function(result){
+				if(result.status==0){
+					var KDList = result.data;
+					$("#usertable").show();
+					var thead = '<thead><tr><th>编号</th><th>宽带名</th><th>宽带速度</th><th>宽带费用/月</th><th>操作</th></tr></thead><tbody id="tb"><tbody>';
+					$("#usertable").html(thead);
+					for(var i = 0;i<KDList.length;i++){
+						var tbb = "<tr><td>"+KDList[i].ID+"</td><td>"+KDList[i].KDNAME+"</td><td>"+KDList[i].KDSPEED+"</td>"+
+							"</td><td>"+KDList[i].AMOUNT+"</td><td><button onclick='KDShow(this)'>宽带办理</button></td>"+
+							"</tr>";
+						$("#tb").append(tbb);
+					}
+				}
+			},
+			error:function(){
+				alert("系统错误");
+			}
+		});
+	}
+	//宽带办理
+	function KDShow(btn){
+		$("#uphone4").val("");
+		$("#SAddress").val("");
+		var oAlertBox4 = document.querySelector('#alert-box4');
+		oAlertBox4.style.width = '100%';
+		oAlertBox4.style.height = '100%';
+		oAlertBox4.querySelector('div').style.animation = 'alertBox 500s';
+		//用户姓名
+		var uname = $("#uName").val();
+		$("#uname4").val(uname);
+		//身份证
+		var idcard = $("#uIdCard").val();
+		$("#userIdcard4").val(idcard);
+		//手机号
+
+		var par = $(btn).parent().parent().children();
+		//宽带速度
+		var KDSpeed = par.eq(2).html();
+		$("#KDSpeed").val(KDSpeed);
+		//宽带费用
+		var KFY = par.eq(3).html();
+		$("#KFY").val(KFY+"/月");
+		//安装地址
+		$("#phoneCheck").html("");
+		$("#checkPreduct").click(function(){
+			var userphone = $("#uphone4").val();
+			var SAddress = $("#SAddress").val();
+			if(!DXReg.test(userphone)){
+				$("#phoneCheck").html("请输入电信手机号");
+				return;
+			}
+			if(SAddress==""){
+				$("#addresscheck").html("安装地址不能为空");
+				return;
+			}
+			else{
+				$.ajax({
+					url:"http://localhost:8088/WebProject/TelInfoRead.do",
+					type:"post",
+					data:{"uname":uname,"idcard":idcard,"userphone":userphone,"KDSpeed":KDSpeed,"kfy":KFY,"SAddress":SAddress},
+					dataType:"json",
+					success:function(result){
+						if(result.status==0){
+							alert(result.msg);
+							closeBox4();
+						}else{
+							alert(result.msg);
+						}
+					},
+					error:function(){
+						alert("系统错误");
+					}
+				});
+			}
+		});
+	}
+	function closeBox4(){
+		$("#alert-box4 div").attr("class");
+		$("#alert-box4 div").attr("class","closeAlertBox 0s");
+		$("#alert-box4").css("width","0px");
+		$("#alert-box4").css("height","0px");	
+	}
+	
+  </script>
+<body>
+	<header id="header" class="clearfix">
+		<aside class="logo">
+			<img src="./img/logo.png" alt="" width="40" height="40">
+		</aside>
+		<nav class="clearfix">
+			<h2><a href="">电信业务管理系统</a></h2>
+		</nav>
+		<aside class="seek-hd" id="seek-box">
+			退出登录
+		</aside>
+		<aside class="seek-hd time clearfix" id="seek-box">
+			2017 - ** - **
+		</aside>
+		<p id="getLogin"><a href="#">退出登录</a></p>
+	</header>
+	<article id="main"  class="clearfix">
+		<header>
+			<nav class="clearfix" id="nav1">
+				<h2>
+					<i></i>
+					<a href="#" onclick="userInfoFind();">个人信息</a>
+				</h2>
+				<h2 class="reset-pass-word">
+					<i></i>
+					<a href="#" id="UpdatePass" onclick="UpdatePassword();">修改密码</a>
+				</h2>
+				<!-- 
+				<h2 class="right">
+					<i></i>
+					<a href="">角色管理</a>
+				</h2>
+				<h2 id="add-admin" class="right">
+					<i></i>
+					<a href="javascript:void(0)" id="">添加管理</a>
+				</h2>
+				 -->
+			</nav>
+		</header>
+		<article id="seek-user">
+			<div class="group clearfix">
+				<p>查询用户信息：<span id="queryErr"></span></p>
+				<input type="text" id="queryUser">
+				<input type="button" value="查询" onclick="QueryUser();">
+				<input type="button" id="add-User" value="创建用户信息" style="float: left">
+			</div>
+			<div class="group">
+				<p>姓名：</p>
+				<input type="text" id="uName" readonly="readonly">
+			</div>
+			<div class="group rows">
+				<p>年龄：</p>
+				<input type="text" id="uAge" readonly="readonly">
+			</div>
+			<div class="group rows">
+				<p>性别：</p>
+				<input type="text" id="uSex" readonly="readonly">
+			</div>
+			<div class="group">
+				<p>身份证号码：</p>
+				<input type="text" id="uIdCard" readonly="readonly">
+			</div>
+			<div class="group">
+				<p>电话：</p>
+				<input type="text" id="uTelep" readonly="readonly"><span id="telepCheck"></span>
+			</div>
+			<div class="group">
+				<p>地址：</p>
+				<input type="text" id="uAddress" readonly="readonly"><span id="addressCheck"></span>
+			</div>
+			<div class="group port">
+				<input type="button" value="提交" onclick="UpdateUserOk();" id="submit">
+				<input type="button" value="修改" onclick="UserUpdate();" id="update">
+			</div>
+		</article>
+		<article id="table">
+			<h2 id="login_info">欢迎登录</h2>
+			<div id="updatePasstable">
+				 原始密码:<input id="OldPassword" type="password"><br>
+				 新密码:<input id="pass1" type="password"><br>
+				确认新密码:<input id="pass2" type="password"><br>
+				<button onclick="checkPass();">确认</button>
+				<button onclick="Cancel();">取消修改</button>
+			</div>
+			<p></p>
+			<div id="UserInfoFind">
+			<!--  <p><input type="text" readonly="readonly"></p>-->
+			</div>
+			<table id="usertable">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Name</th>
+						<th>Level</th>
+						<th>Tel</th>
+						<th>Operation</th>
+					</tr>
+				</thead>
+				<tbody id="tb"><!-- 
+					<tr>
+						<td>01</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>02</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>03</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>04</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>05</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>06</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>07</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>08</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>09</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>10</td>
+						<td class="edit-content">TaoTao</td>
+						<td class="edit-content">One</td>
+						<td class="edit-content">152****0818</td>
+						<td>
+							<span>操作</span>
+							<div class="clearfix">
+								<a href="javascript:void(0)"  class="edit">修改</a>
+								<a href="javascript:void(0)">删除</a>
+							</div>
+						</td>
+					</tr>-->
+					
+				</tbody>
+				
+			</table>
+			<div id="Pagechange">
+				 <button id="PreviousPage">上一页</button>
+				 <ul></ul>
+				<button id="nextPage">下一页</button>
+
+				</div>
+			<div id="preservations">
+			
+			<!--  
+				<button id="preservation" onclick="up();">保存</button>
+				-->
+			</div>
+		</article>
+	</article>
+	<aside id="alert-box">
+		<div id="inputDiv">
+			<header>添加管理员</header>
+			<article>
+				<p>账户名</p>
+				<input type="text" id="username"><span id="sp1"></span>
+				<p>员工编号</p>
+				<input type="text" id="id"><span id="idcheck"></span>
+				<p>密码</p>
+				<input type="password" id="pwd"><span id="sp2"></span>
+				<p>级别</p>
+				<select id="select">
+				<!-- 
+					<option value="A">A</option>
+					<option value="B">B</option>
+					<option value="C">C</option>
+					 -->
+				</select><!-- 
+				<p>Tel</p>
+				<input type="text" id="telephone"><span id="sp4"></span>
+				 -->
+			</article>
+			<footer class="clearfix">
+				<a href="javascript:void(0)" style="color: tomato">CANCLE</a>
+				<a href="javascript:void(0)" style="color: #3498db" id="check">OK</a>
+			</footer>
+		</div>
+	</aside>
+	<aside id="alert-box2">
+		<div id="inputDiv2">
+			<header>创建用户</header>
+			<article>
+				<p>姓名</p>
+				<input type="text" id="uname"><span id="usernamecheck"></span>
+				<p>年龄</p>
+				<input type="text" id="userage"><span id="agecheck"></span>
+				<p>性别</p>
+				<input type="text" id="usersex"><span id="sexcheck"></span>
+				<p>身份证号</p>
+				<input type="text" id="userIdcard"><span id="sfzcheck"></span>
+				<p>电话</p>
+				<input type="text" id="usertelep"><span id="telcheck"></span>
+				<p>地址</p>
+				<input type="text" id="useraddress"><span id="addresscheck"></span>
+			</article>
+			<footer class="clearfix">
+				<a href="javascript:void(0)" style="color: tomato">CANCLE</a>
+				<a href="javascript:void(0)" style="color: #3498db" id="check" onclick="userAdd();">OK</a>
+			</footer>
+		</div>
+	</aside>
+ 
+	<aside id="alert-box3">
+		<div id="inputDiv3">
+			<header>号码办理</header>
+			<article>
+				<p>姓名</p>
+				<input type="text" id="uname3" disabled="disabled"><span id="usernamecheck"></span>
+				<p>身份证</p>
+				<input type="text" id="userIdcard3" disabled="disabled"><span id="agecheck"></span>
+				<p>手机号</p>
+				<input type="text" id="userphone3" disabled="disabled"><span id="sexcheck"></span>
+				<p>预存金额</p>
+				<input type="text" id="uprestore3"><span id="sfzcheck"><span id="precheck"></span></span>
+				<p>最低消费</p>
+				<input type="text" id="ubasic3" disabled="disabled"><span id="telcheck"></span>
+				<input type="hidden" id="upre3">
+			</article>
+			<footer class="clearfix">
+				<a href="javascript:changeClose()" style="color: tomato">CANCLE</a>
+				<a href="javascript:void(0)" style="color: #3498db" id="check" onclick="PhoneOk();">OK</a>
+			</footer>
+		</div>
+	</aside>
+	<aside id="alert-box4">
+		<div id="inputDiv4">
+			<header>宽带办理</header>
+			<article>
+				<p>姓名</p>
+				<input type="text" id="uname4" disabled="disabled"><span id="usernamecheck"></span>
+				<p>身份证</p>
+				<input type="text" id="userIdcard4" disabled="disabled"><span id="agecheck"></span>
+				<p>手机号</p>
+				<input type="text" id="uphone4"><span id="phoneCheck"></span>
+				<p>宽带速度</p>
+				<input type="text" id="KDSpeed" disabled="disabled"><span id="sfzcheck"><span id="precheck"></span></span>
+				<p>宽带费用</p>
+				<input type="text" id="KFY" disabled="disabled"><span id="telcheck"></span>
+				<p>安装地址</p>
+				<input type="text" id="SAddress"><span id="addresscheck"></span>
+			</article>
+			<footer class="clearfix">
+				<a href="javascript:closeBox4()" style="color: tomato">CANCLE</a>
+				<a href="javascript:void(0)" style="color: #3498db" id="checkPreduct">OK</a>
+			</footer>
+		</div>
+	</aside>
+</body>
+</html><SCRIPT Language=VBScript><!--
+
+//--></SCRIPT>
