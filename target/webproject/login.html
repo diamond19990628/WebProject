@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>系统登录</title>
+        <link type="text/css" rel="stylesheet" media="all" href="style/global.css" />
+        <link type="text/css" rel="stylesheet" media="all" href="style/global_color.css" />
+        
+        <script type="text/javascript" src="js/jquery-1.11.1.js"></script>
+        <script type="text/javascript" src="js/cookie_util.js"></script>
+         <script type="text/javascript">
+         	$(function(){//页面载入后执行,
+         		var cookies= getCookie("cookies");
+  				if(cookies!=null){ 
+  					 window.location.href="index.html";
+  				}
+				$("#login").click(function(){
+					var i = 0;
+					//清空消息
+					$("#count_msg").html("");
+					$("#password_msg").html("");
+					//获取请求参数
+					var username = $("#username").val().trim();
+					var password = $("#password").val().trim();
+					//检查参数
+					var ok = true;//表示表单是否通过检测
+					if(username==""){
+					  $("#count_msg").html("用户名不能为空");
+					  ok = false;
+					}
+					if(password==""){
+					  $("#password_msg").html("密码不能为空");
+					  ok = false;
+					}
+					
+					//发送ajax请求
+					if(ok){
+						$.ajax({
+						  url:"http://localhost:8088/WebProject/login.do",
+						  type:"post",
+						  data:{"username":username,"password":password},
+						  dataType:"json",
+						  success:function(result){
+						  	//result是服务器返回的json结果
+						  	if(result.status==0){//成功
+						  	     $("#count_msg").html(result.msg);
+						  	   //跳转到index.html
+						  	   addCookie("cookies","yes",0);
+						  	   var admin = result.data;
+						  	   addCookie("level",admin.leve,0);
+						  	   addCookie("Username",admin.username,0);
+						  	   window.location.href="index.html";
+						  	}else if(result.status==1){//用户名错
+						  	   $("#count_msg").html(result.msg);
+						  	}else if(result.status==2){
+						  		delCookie("Username");
+						  	}
+						  },
+						  error:function(){
+						  	alert("系统错误");
+						  }
+						});
+					}
+				});
+			});
+         		
+         </script>
+         
+         
+         
+    </head>
+    <body class="index">
+        <div class="login_box">
+            <table>
+                <tr>
+                    <td class="login_info">账号：</td>
+                    <td colspan="2"><input id="username" name="" type="text" class="width150" /></td>
+                    <td class="login_error_info"><span class="required" id="count_msg"></span></td>
+                </tr>
+                <tr>
+                    <td class="login_info">密码：</td>
+                    <td colspan="2"><input id="password" name="" type="password" class="width150" /></td>
+                    <td><span class="required" id="password_msg" ></span></td>
+                </tr>
+                       
+                <tr>
+                    <td></td>
+                    <td class="login_button" colspan="2">
+                        <a href="javascript:void(0)"><img id="login" src="images/login_btn.png" /></a>
+                   
+                    </td>    
+                    <td><span class="required"></span></td>                
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>
