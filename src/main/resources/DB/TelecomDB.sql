@@ -6,8 +6,11 @@ create table useradmini(
     password varchar(30) not null
 );
 
-create table phone(
+create table Phone(
     id int not null primary key,
     pNumber varchar(20),
-    status varchar(20)
+    status varchar(20),
+    lastoperationa varchar(30)
 )
+
+drop table phone
