@@ -3,7 +3,7 @@
  "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
 <mapper namespace="org.test.dao.UserDao">
 	<insert id="UserAdd" parameterType="org.test.entity.User">
-		insert into Usertable values(seq_id.nextval,#{username},#{age},#{sex},#{idCard},#{telep},#{address})
+		insert into Usertable values(null,#{username},#{age},#{sex},#{idCard},#{telep},#{address})
 	</insert>
 	
 	<select id="UserFind" parameterType="java.lang.String" resultType="org.test.entity.User">

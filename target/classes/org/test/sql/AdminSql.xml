@@ -9,7 +9,7 @@
 		select count(*) from useradmini
 	</select>
 	<select id="UserReadPage" parameterType="org.test.entity.Page" resultType="org.test.entity.Admin">
-		select * from (select c.*,rownum r from (select * from useradmini)c) where r>#{begin} and r&lt;#{end}
+		select * from (select t.*,(@rownum := @rownum + 1) as r from useradmini t,(select @rownum := 0) rn) c where r>#{begin} and r&lt;#{end}
 	</select>
 	
 	<select id="UserInfoFind" parameterType="java.lang.String" resultType="org.test.entity.UserInfo">
@@ -44,7 +44,7 @@
 	</update>
 	    <!-- resultType为返回类型 -->
 	<insert id="UserRegister" parameterType="org.test.entity.Admin" >
-		insert into useradmini values(seq_id.nextval,#{username},#{password},#{leve},#{telep},'0')
+		insert into useradmini values(null,#{username},#{password},#{leve},#{telep},'0')
 	</insert>
 	<!-- 查看用户名是否存在 -->
 	<select id="UsernameRead" parameterType="org.test.entity.Admin" resultType="org.test.entity.Admin" >
